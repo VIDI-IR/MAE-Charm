@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "669640559381",
+    "project_id": "charm-f8204",
+    "storage_bucket": "charm-f8204.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:669640559381:android:0f9a7f2a917d977d7b371c",
+        "android_client_info": {
+          "package_name": "com.example.charmassignment"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEphfWnBLHKp8Ezw7UxXFpJVssox_O0sQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
