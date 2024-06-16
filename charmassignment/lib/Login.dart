@@ -1,4 +1,4 @@
-import 'package:charmassignment/AdminHome.dart';
+import 'package:charmassignment/admin/AdminHome.dart';
 import 'package:charmassignment/VendorHome.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,46 +29,51 @@ class _LoginState extends State<Login> {
   }
 
   Future<void> _login() async {
-    try {
-      final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
+  try {
+    final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
 
-      if (userCredential.user != null) {
-        final uid = userCredential.user!.uid;
-        final docRef = _firestore.collection('Users').doc(uid);
-        final document = await docRef.get(); // Get user document
+    if (userCredential.user != null) {
+      final uid = userCredential.user!.uid;
+      final docRef = _firestore.collection('Users').doc(uid);
+      final document = await docRef.get(); // Get user document
 
-        if (document.exists) {
-          final role = document.data()!['role']; // Access the role field
+      if (document.exists) {
+        final role = document.data()!['role']; // Access the role field
 
-          if (role == 'customer') {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const CustomerHome()),
-            );
-          } else if (role == 'vendor') {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const VendorHome()),
-            );
-            
-          
-          } else if (role == 'admin') {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const AdminHome()),
-            );
-          
-          } else {
-            _showDialog('Error', 'Invalid role in user document');
-          }
+        // Record login info
+        await _firestore.collection('LoginInfo').add({
+          'uid': uid,
+          'email': _emailController.text,
+          'loginTime': FieldValue.serverTimestamp(),
+        });
+
+        if (role == 'customer') {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const CustomerHome()),
+          );
+        } else if (role == 'vendor') {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const VendorHome()),
+          );
+        } else if (role == 'admin') {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const AdminHome()),
+          );
         } else {
-          _showDialog('Error', 'User document not found');
+          _showDialog('Error', 'Invalid role in user document');
         }
+      } else {
+        _showDialog('Error', 'User document not found');
       }
-    } on FirebaseAuthException catch (e) {
-      _showDialog('Login Error', e.message ?? 'An unknown error occurred');
     }
+  } on FirebaseAuthException catch (e) {
+    _showDialog('Login Error', e.message ?? 'An unknown error occurred');
   }
+}
+
 
   void _showDialog(String title, String message) {
     showDialog(
